@@ -10,18 +10,18 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('prev-month').addEventListener('click', function () {
         currentYear = (currentMonth === 0) ? currentYear - 1 : currentYear;
         currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
-        loadCSVAndUpdateCalendar(currentYear, currentMonth);  // 月移動時にCSVデータとカレンダーを更新
+        showCalendar(currentMonth, currentYear);
     });
 
     document.getElementById('next-month').addEventListener('click', function () {
         currentYear = (currentMonth === 11) ? currentYear + 1 : currentYear;
         currentMonth = (currentMonth === 11) ? 0 : currentMonth + 1;
-        loadCSVAndUpdateCalendar(currentYear, currentMonth);  // 月移動時にCSVデータとカレンダーを更新
+        showCalendar(currentMonth, currentYear);
     });
 
     // CSVデータを取得してイベントを反映する関数
     function loadCSVAndUpdateCalendar(year, month) {
-        const sasUrl = 'https://vcalender.blob.core.windows.net/data/%E3%83%9E%E3%82%B9%E3%82%BF.csv?sp=r&st=2024-09-15T05:48:19Z&se=2024-09-15T13:48:19Z&spr=https&sv=2022-11-02&sr=b&sig=Dn%2B4lKG5aWQw5awtZbQIbHvUwOw0fNCYvI7emQ4p0uU%3D';  // ここに取得したSAS URLを入れる
+        const sasUrl = 'https://vcalender.blob.core.windows.net/data/%E3%83%9E%E3%82%B9%E3%82%BF%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB.csv?sp=r&st=2024-09-15T12:02:36Z&se=2024-09-15T20:02:36Z&spr=https&sv=2022-11-02&sr=b&sig=O2lFXUmMlDeJcRzFTHWvXuSvfs2BQtQAK0mmnBZmZE8%3D';  // ここに取得したSAS URLを入れる
 
         fetch(sasUrl)
             .then(response => response.text())
@@ -31,30 +31,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 rows.forEach(row => {
                     let columns = row.split(',');
-
-                    // CSVの日付が "1/13" のようなフォーマットの場合
-                    let dateParts = columns[5].split('/');
-                    if (dateParts.length === 2) {  // 月日が正しく分割できた場合のみ処理する
-                        let eventMonth = parseInt(dateParts[0], 10) - 1; // JavaScriptの月は0から始まるので-1
-                        let eventDay = parseInt(dateParts[1], 10);
-                        
-                        // 年はカレンダーの表示される年 (currentYear) を使って補完
-                        let eventDate = new Date(currentYear, eventMonth, eventDay);
-                        let eventDetails = columns[4];  // イベント詳細を適宜取得（ここでは "Name" 列を使用）
-
-                        // イベントがカレンダーの表示する月と一致するかチェック
-                        if (eventDate.getFullYear() === year && eventDate.getMonth() === month) {
-                            events[eventDate.getDate()] = eventDetails;
-                        }
+                    let eventDate = new Date(columns[0]);
+                    let eventDetails = columns[1];
+                    
+                    // イベントがカレンダーの表示する月と一致するかチェック
+                    if (eventDate.getFullYear() === year && eventDate.getMonth() === month) {
+                        events[eventDate.getDate()] = eventDetails;
                     }
                 });
 
                 showCalendar(month, year, events); // イベントをカレンダーに反映
             })
-            .catch(error => {
-                console.error('Error fetching CSV:', error);
-                showCalendar(month, year);  // エラー時もカレンダーを表示する
-            });
+            .catch(error => console.error('Error:', error));
     }
 
     function showCalendar(month, year, events = {}) {
