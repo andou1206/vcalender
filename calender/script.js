@@ -32,14 +32,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 rows.forEach(row => {
                     let columns = row.split(',');
 
-                    // CSVの日付が "9月15日" のようなフォーマットの場合
-                    let dateParts = columns[5].replace('月', '-').replace('日', '').split('-');
+                    // CSVの日付が "1/13" のようなフォーマットの場合
+                    let dateParts = columns[5].split('/');
                     let eventMonth = parseInt(dateParts[0], 10) - 1; // JavaScriptの月は0から始まるので-1
                     let eventDay = parseInt(dateParts[1], 10);
                     
                     // 年はカレンダーの表示される年 (currentYear) を使って補完
                     let eventDate = new Date(currentYear, eventMonth, eventDay);
-                    let eventDetails = columns[4];
+                    let eventDetails = columns[4];  // イベント詳細を適宜取得（ここでは "Name" 列を使用）
 
                     // イベントがカレンダーの表示する月と一致するかチェック
                     if (eventDate.getFullYear() === year && eventDate.getMonth() === month) {
