@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('prev-month').addEventListener('click', function () {
         currentYear = (currentMonth === 0) ? currentYear - 1 : currentYear;
         currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
-        showCalendar(currentMonth, currentYear);
+        loadCSVAndUpdateCalendar(currentYear, currentMonth);
     });
 
     document.getElementById('next-month').addEventListener('click', function () {
         currentYear = (currentMonth === 11) ? currentYear + 1 : currentYear;
         currentMonth = (currentMonth === 11) ? 0 : currentMonth + 1;
-        showCalendar(currentMonth, currentYear);
+        loadCSVAndUpdateCalendar(currentYear, currentMonth);
     });
 
     // CSVデータを取得してイベントを反映する関数
@@ -31,9 +31,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 rows.forEach(row => {
                     let columns = row.split(',');
-                    let eventDate = new Date(columns[5]);
-                    let eventDetails = columns[4];
+
+                    // CSVの日付が "9月15日" のようなフォーマットの場合
+                    let dateParts = columns[5].replace('月', '-').replace('日', '').split('-');
+                    let eventMonth = parseInt(dateParts[0], 10) - 1; // JavaScriptの月は0から始まるので-1
+                    let eventDay = parseInt(dateParts[1], 10);
                     
+                    // 年はカレンダーの表示される年 (currentYear) を使って補完
+                    let eventDate = new Date(currentYear, eventMonth, eventDay);
+                    let eventDetails = columns[4];
+
                     // イベントがカレンダーの表示する月と一致するかチェック
                     if (eventDate.getFullYear() === year && eventDate.getMonth() === month) {
                         events[eventDate.getDate()] = eventDetails;
