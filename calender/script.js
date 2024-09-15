@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('prev-month').addEventListener('click', function () {
         currentYear = (currentMonth === 0) ? currentYear - 1 : currentYear;
         currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
-        loadCSVAndUpdateCalendar(currentYear, currentMonth);
+        loadCSVAndUpdateCalendar(currentYear, currentMonth);  // 月移動時にCSVデータとカレンダーを更新
     });
 
     document.getElementById('next-month').addEventListener('click', function () {
         currentYear = (currentMonth === 11) ? currentYear + 1 : currentYear;
         currentMonth = (currentMonth === 11) ? 0 : currentMonth + 1;
-        loadCSVAndUpdateCalendar(currentYear, currentMonth);
+        loadCSVAndUpdateCalendar(currentYear, currentMonth);  // 月移動時にCSVデータとカレンダーを更新
     });
 
     // CSVデータを取得してイベントを反映する関数
@@ -34,22 +34,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // CSVの日付が "1/13" のようなフォーマットの場合
                     let dateParts = columns[5].split('/');
-                    let eventMonth = parseInt(dateParts[0], 10) - 1; // JavaScriptの月は0から始まるので-1
-                    let eventDay = parseInt(dateParts[1], 10);
-                    
-                    // 年はカレンダーの表示される年 (currentYear) を使って補完
-                    let eventDate = new Date(currentYear, eventMonth, eventDay);
-                    let eventDetails = columns[4];  // イベント詳細を適宜取得（ここでは "Name" 列を使用）
+                    if (dateParts.length === 2) {  // 月日が正しく分割できた場合のみ処理する
+                        let eventMonth = parseInt(dateParts[0], 10) - 1; // JavaScriptの月は0から始まるので-1
+                        let eventDay = parseInt(dateParts[1], 10);
+                        
+                        // 年はカレンダーの表示される年 (currentYear) を使って補完
+                        let eventDate = new Date(currentYear, eventMonth, eventDay);
+                        let eventDetails = columns[4];  // イベント詳細を適宜取得（ここでは "Name" 列を使用）
 
-                    // イベントがカレンダーの表示する月と一致するかチェック
-                    if (eventDate.getFullYear() === year && eventDate.getMonth() === month) {
-                        events[eventDate.getDate()] = eventDetails;
+                        // イベントがカレンダーの表示する月と一致するかチェック
+                        if (eventDate.getFullYear() === year && eventDate.getMonth() === month) {
+                            events[eventDate.getDate()] = eventDetails;
+                        }
                     }
                 });
 
                 showCalendar(month, year, events); // イベントをカレンダーに反映
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error fetching CSV:', error);
+                showCalendar(month, year);  // エラー時もカレンダーを表示する
+            });
     }
 
     function showCalendar(month, year, events = {}) {
