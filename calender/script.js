@@ -19,51 +19,88 @@ document.addEventListener('DOMContentLoaded', function () {
         showCalendar(currentMonth, currentYear);
     });
 
-function showCalendar(month, year) {
-    const firstDay = (new Date(year, month)).getDay();
-    const daysInMonth = 32 - new Date(year, month, 32).getDate();
+    // CSVデータを取得してイベントを反映する関数
+    function loadCSVAndUpdateCalendar(year, month) {
+        const sasUrl = 'https://vcalender.blob.core.windows.net/data/%E3%83%9E%E3%82%B9%E3%82%BF.csv?sp=r&st=2024-09-15T05:48:19Z&se=2024-09-15T13:48:19Z&spr=https&sv=2022-11-02&sr=b&sig=Dn%2B4lKG5aWQw5awtZbQIbHvUwOw0fNCYvI7emQ4p0uU%3D';  // ここに取得したSAS URLを入れる
 
-    calendarBody.innerHTML = "";
+        fetch(sasUrl)
+            .then(response => response.text())
+            .then(data => {
+                let rows = data.split('\n');
+                let events = {};
 
-    monthYear.innerHTML = `${year}年 ${monthNames[month]}`;
+                rows.forEach(row => {
+                    let columns = row.split(',');
+                    let eventDate = new Date(columns[0]);
+                    let eventDetails = columns[1];
+                    
+                    // イベントがカレンダーの表示する月と一致するかチェック
+                    if (eventDate.getFullYear() === year && eventDate.getMonth() === month) {
+                        events[eventDate.getDate()] = eventDetails;
+                    }
+                });
 
-    let date = 1;
-    for (let i = 0; i < 6; i++) {
-        let row = document.createElement('tr');
-
-        for (let j = 0; j < 7; j++) {
-            let cell = document.createElement('td');
-            let dateDiv = document.createElement('div');
-            dateDiv.className = 'date'; // 'date' クラスを設定
-            let cellText = document.createTextNode("");
-            
-            if (i === 0 && j < firstDay) {
-                cell.appendChild(dateDiv);
-            } else if (date > daysInMonth) {
-                break;
-            } else {
-                cellText = document.createTextNode(date);
-                dateDiv.appendChild(cellText); // 日付を div に追加
-                cell.appendChild(dateDiv); // div を td に追加
-                date++;
-                
-                // 日曜日と土曜日のクラスを設定
-                if (j === 0) {
-                    cell.classList.add("sunday");
-                } else if (j === 6) {
-                    cell.classList.add("saturday");
-                }
-
-                if (date - 1 === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
-                    cell.classList.add("highlight");
-                }
-            }
-            row.appendChild(cell);
-        }
-
-        calendarBody.appendChild(row);
+                showCalendar(month, year, events); // イベントをカレンダーに反映
+            })
+            .catch(error => console.error('Error:', error));
     }
-}
 
-    showCalendar(currentMonth, currentYear);
+    function showCalendar(month, year, events = {}) {
+        const firstDay = (new Date(year, month)).getDay();
+        const daysInMonth = 32 - new Date(year, month, 32).getDate();
+
+        calendarBody.innerHTML = "";
+
+        monthYear.innerHTML = `${year}年 ${monthNames[month]}`;
+
+        let date = 1;
+        for (let i = 0; i < 6; i++) {
+            let row = document.createElement('tr');
+
+            for (let j = 0; j < 7; j++) {
+                let cell = document.createElement('td');
+                let dateDiv = document.createElement('div');
+                dateDiv.className = 'date'; 
+                let cellText = document.createTextNode("");
+                
+                if (i === 0 && j < firstDay) {
+                    cell.appendChild(dateDiv);
+                } else if (date > daysInMonth) {
+                    break;
+                } else {
+                    cellText = document.createTextNode(date);
+                    dateDiv.appendChild(cellText); 
+                    cell.appendChild(dateDiv); 
+                    
+                    // イベントがある場合、表示する
+                    if (events[date]) {
+                        let eventDiv = document.createElement('div');
+                        eventDiv.className = 'event';
+                        eventDiv.textContent = events[date]; // イベント内容を表示
+                        cell.appendChild(eventDiv);
+                    }
+
+                    // 日曜日と土曜日のクラスを設定
+                    if (j === 0) {
+                        cell.classList.add("sunday");
+                    } else if (j === 6) {
+                        cell.classList.add("saturday");
+                    }
+
+                    if (date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
+                        cell.classList.add("highlight");
+                    }
+
+                    date++;
+                }
+                row.appendChild(cell);
+            }
+
+            calendarBody.appendChild(row);
+        }
+    }
+
+    // 初期表示時にCSVを読み込んでカレンダーに反映
+    loadCSVAndUpdateCalendar(currentYear, currentMonth);
+
 });
