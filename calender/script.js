@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadCSVAndUpdateCalendar(year, month) {
         const sasUrl = 'https://vcalender.blob.core.windows.net/data/%E3%83%9E%E3%82%B9%E3%82%BF%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB.csv?sp=r&st=2024-09-15T12:02:36Z&se=2024-09-15T20:02:36Z&spr=https&sv=2022-11-02&sr=b&sig=O2lFXUmMlDeJcRzFTHWvXuSvfs2BQtQAK0mmnBZmZE8%3D';  // ここに取得したSAS URLを入れる
 
-        fetch(sasUrl)
+fetch(sasUrl)
             .then(response => response.text())
             .then(data => {
                 let rows = data.split('\n');
@@ -31,9 +31,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 rows.forEach(row => {
                     let columns = row.split(',');
-                    let eventDate = new Date(columns[0]);
-                    let eventDetails = columns[1];
+
+                    // CSVの日付が "9月15日" のようなフォーマットの場合
+                    let dateParts = columns[0].replace('月', '-').replace('日', '').split('-');
+                    let eventMonth = parseInt(dateParts[0], 10) - 1; // JavaScriptの月は0から始まるので-1
+                    let eventDay = parseInt(dateParts[1], 10);
                     
+                    // 年はカレンダーの表示される年 (currentYear) を使って補完
+                    let eventDate = new Date(currentYear, eventMonth, eventDay);
+                    let eventDetails = columns[1];
+
                     // イベントがカレンダーの表示する月と一致するかチェック
                     if (eventDate.getFullYear() === year && eventDate.getMonth() === month) {
                         events[eventDate.getDate()] = eventDetails;
@@ -44,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => console.error('Error:', error));
     }
+
 
     function showCalendar(month, year, events = {}) {
         const firstDay = (new Date(year, month)).getDay();
