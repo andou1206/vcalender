@@ -31,8 +31,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 rows.forEach(row => {
                     let columns = row.split(',');
-                    let eventDate = new Date(columns[0]);
-                    let eventDetails = columns[1];
+                    let eventDate = new Date(columns[5]);
+                    let eventDetails = columns[4];
                     
                     // イベントがカレンダーの表示する月と一致するかチェック
                     if (eventDate.getFullYear() === year && eventDate.getMonth() === month) {
