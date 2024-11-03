@@ -1,69 +1,101 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const monthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
-    const today = new Date();
-    let currentMonth = today.getMonth();
-    let currentYear = today.getFullYear();
+document.addEventListener("DOMContentLoaded", function() {
+    const monthYearElement = document.getElementById("monthYear");
+    const calendarBody = document.getElementById("calendarBody");
+    const prevMonthButton = document.getElementById("prevMonth");
+    const nextMonthButton = document.getElementById("nextMonth");
 
-    const monthYear = document.getElementById('month-year');
-    const calendarBody = document.getElementById('calendar-body');
+    let currentDate = new Date();
+    loadCSVAndUpdateCalendar();
 
-    document.getElementById('prev-month').addEventListener('click', function () {
-        currentYear = (currentMonth === 0) ? currentYear - 1 : currentYear;
-        currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
-        showCalendar(currentMonth, currentYear);
+    prevMonthButton.addEventListener("click", () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        loadCSVAndUpdateCalendar();
     });
 
-    document.getElementById('next-month').addEventListener('click', function () {
-        currentYear = (currentMonth === 11) ? currentYear + 1 : currentYear;
-        currentMonth = (currentMonth === 11) ? 0 : currentMonth + 1;
-        showCalendar(currentMonth, currentYear);
+    nextMonthButton.addEventListener("click", () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        loadCSVAndUpdateCalendar();
     });
 
-function showCalendar(month, year) {
-    const firstDay = (new Date(year, month)).getDay();
-    const daysInMonth = 32 - new Date(year, month, 32).getDate();
-
-    calendarBody.innerHTML = "";
-
-    monthYear.innerHTML = `${year}年 ${monthNames[month]}`;
-
-    let date = 1;
-    for (let i = 0; i < 6; i++) {
-        let row = document.createElement('tr');
-
-        for (let j = 0; j < 7; j++) {
-            let cell = document.createElement('td');
-            let dateDiv = document.createElement('div');
-            dateDiv.className = 'date'; // 'date' クラスを設定
-            let cellText = document.createTextNode("");
-            
-            if (i === 0 && j < firstDay) {
-                cell.appendChild(dateDiv);
-            } else if (date > daysInMonth) {
-                break;
-            } else {
-                cellText = document.createTextNode(date);
-                dateDiv.appendChild(cellText); // 日付を div に追加
-                cell.appendChild(dateDiv); // div を td に追加
-                date++;
-                
-                // 日曜日と土曜日のクラスを設定
-                if (j === 0) {
-                    cell.classList.add("sunday");
-                } else if (j === 6) {
-                    cell.classList.add("saturday");
-                }
-
-                if (date - 1 === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
-                    cell.classList.add("highlight");
-                }
-            }
-            row.appendChild(cell);
-        }
-
-        calendarBody.appendChild(row);
+    function loadCSVAndUpdateCalendar() {
+        fetch("https://vcalender.blob.core.windows.net/testdata/マスタ.csv")
+            .then(response => response.text())
+            .then(data => {
+                const csvData = parseCSV(data);
+                updateCalendar(csvData);
+            })
+            .catch(error => console.error("CSV読み込みエラー:", error));
     }
-}
 
-    showCalendar(currentMonth, currentYear);
+    function parseCSV(data) {
+        const rows = data.split("\n").map(row => row.split(","));
+        return rows;
+    }
+
+    function updateCalendar(csvData) {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        monthYearElement.textContent = `${year}年${month + 1}月`;
+
+        calendarBody.innerHTML = "";
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const lastDate = new Date(year, month + 1, 0).getDate();
+
+        for (let date = 1; date <= lastDate; date++) {
+            const row = document.createElement("tr");
+
+            // 日付
+            const dateCell = document.createElement("td");
+            dateCell.textContent = date;
+            row.appendChild(dateCell);
+
+            // 曜日
+            const day = new Date(year, month, date).getDay();
+            const dayCell = document.createElement("td");
+            dayCell.textContent = ["日", "月", "火", "水", "木", "金", "土"][day];
+            if (day === 0) dayCell.classList.add("sunday");
+            if (day === 6) dayCell.classList.add("saturday");
+            row.appendChild(dayCell);
+
+            // 誕生日
+            const birthdayCell = document.createElement("td");
+            const formattedDate = `${month + 1}/${date}`;
+            const birthdayEvents = [];
+
+            csvData.forEach(row => {
+                if (row[0] === formattedDate && row[1]) {
+                    birthdayEvents.push(row[1]);
+                }
+            });
+
+            if (birthdayEvents.length > 0) {
+                birthdayCell.innerHTML = birthdayEvents.join("<br>");
+            }
+            row.appendChild(birthdayCell);
+
+            // 記念日
+            const commemorationCell = document.createElement("td");
+            const commemorationEvents = [];
+
+            csvData.forEach(row => {
+                if (row[5]) {
+                    const [eventYear, eventMonth, eventDate] = row[5].split("/").map(Number);
+                    if (eventMonth === month + 1 && eventDate === date && row[1]) {
+                        const yearsSince = year - eventYear;
+                        // キラキラ効果を追加
+                        const glitterEvent = `<span class="glitter-text">${row[1]} ${yearsSince}周年</span>`;
+                        commemorationEvents.push(glitterEvent);
+                    }
+                }
+            });
+
+            if (commemorationEvents.length > 0) {
+                commemorationCell.innerHTML = commemorationEvents.join("<br>");
+            }
+            row.appendChild(commemorationCell);
+
+            calendarBody.appendChild(row);
+        }
+    }
 });

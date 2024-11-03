@@ -4,36 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>カレンダー</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="calendar">
         <div class="header">
-            <button id="prev-month">◀</button>
-            <div id="month-year" class="month-year">2024年8月</div>
-            <button id="next-month">▶</button>
+            <button id="prevMonth">前月</button>
+            <div class="month-year" id="monthYear"></div>
+            <button id="nextMonth">次月</button>
         </div>
         <table>
             <thead>
                 <tr>
-                   <th class="sunday">日</th>
-        　　　　　　<th>月</th>
-       　　　　　　 <th>火</th>
-        　　　　　　<th>水</th>
-        　　　　　　<th>木</th>
-        　　　　　　<th>金</th>
-        　　　　　　<th class="saturday">土</th>
+                    <th>日付</th>
+                    <th>曜日</th>
+                    <th class="birthday">誕生日</th>
+                    <th class="commemoration">記念日</th>
                 </tr>
             </thead>
-
-            <tbody id="calendar-body">
-                <!-- JavaScriptでカレンダーの日付がここに挿入されます -->
-            </tbody>
+            <tbody id="calendarBody"></tbody>
         </table>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
-
-
