@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (eventMonth === month + 1 && eventDate === date && row[1]) {
                         const yearsSince = year - eventYear;
                         // キラキラ効果を追加
-                        const glitterEvent = `<span class="glitter-text">${row[1]} ${yearsSince}周年</span>`;
+                        const glitterEvent = `${row[1]} <span class="glitter-text">${yearsSince}周年</span>`;
                         commemorationEvents.push(glitterEvent);
                     }
                 }
