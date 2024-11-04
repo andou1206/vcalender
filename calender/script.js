@@ -64,8 +64,30 @@ document.addEventListener("DOMContentLoaded", function() {
             const birthdayEvents = [];
 
             csvData.forEach(row => {
-                if (row[0] === formattedDate && row[1]) {
-                    birthdayEvents.push(row[1]);
+                // 10列目が空欄でない場合はスキップ
+                if (row[10] && row[10].trim() !== "") return;
+                
+                // 誕生日イベントの表示
+                 if (row[0] === formattedDate && row[1] && row[10] !== "1") { // 10列目が"1"でない場合
+                    let iconImg = "";
+                    switch (row[2]) { // 2列目の値に基づき画像ファイルを指定
+                        case "にじさんじ": iconImg = "nijisannji.png"; break;
+                        case "ホロライブ": iconImg = "hololive.png"; break;
+                        case ".LIVE": iconImg = "dootolive.png"; break;
+                        case "Neo-Porte": iconImg = "Neoporte.png"; break;
+                        case "あおぎり高校": iconImg = "aogirikoukou.png"; break;
+                        case "ぶいすぽっ！": iconImg = "vspo.png"; break;
+                        case "のりプロ": iconImg = "noriporo.png"; break;
+                        case "ななしいんく": iconImg = "nanasiinku.png"; break;
+                    }
+                    if (iconImg) {
+                        birthdayEvents.push(
+                            `<img src="https://vcalender.blob.core.windows.net/icons/${iconImg}" 
+                            alt="${row[2]}" style="height:16px; vertical-align:middle;"> ${row[1]}`
+                        );
+                    } else {
+                        birthdayEvents.push(row[1]);
+                    }
                 }
             });
 
@@ -79,13 +101,34 @@ document.addEventListener("DOMContentLoaded", function() {
             const commemorationEvents = [];
 
             csvData.forEach(row => {
+                // 10列目が空欄でない場合はスキップ
+                if (row[10] && row[10].trim() !== "") return;
+
+                // 記念日イベントの表示
                 if (row[5]) {
                     const [eventYear, eventMonth, eventDate] = row[5].split("/").map(Number);
-                    if (eventMonth === month + 1 && eventDate === date && row[1]) {
+if (eventMonth === month + 1 && eventDate === date && row[1]) {
                         const yearsSince = year - eventYear;
-                        // キラキラ効果を追加
+                        let iconImg = "";
+                        switch (row[2]) {
+                            case "にじさんじ": iconImg = "nijisannji.png"; break;
+                            case "ホロライブ": iconImg = "hololive.png"; break;
+                            case ".LIVE": iconImg = "dootolive.png"; break;
+                            case "Neo-Porte": iconImg = "Neoporte.png"; break;
+                            case "あおぎり高校": iconImg = "aogirikoukou.png"; break;
+                            case "ぶいすぽっ！": iconImg = "vspo.png"; break;
+                            case "のりプロ": iconImg = "noriporo.png"; break;
+                            case "ななしいんく": iconImg = "nanasiinku.png"; break;
+                        }
                         const glitterEvent = `${row[1]} <span class="glitter-text">${yearsSince}周年</span>`;
-                        commemorationEvents.push(glitterEvent);
+                        if (iconImg) {
+                            commemorationEvents.push(
+                                `<img src="https://vcalender.blob.core.windows.net/icons/${iconImg}" 
+                                alt="${row[2]}" style="height:16px; vertical-align:middle;"> ${glitterEvent}`
+                            );
+                        } else {
+                            commemorationEvents.push(glitterEvent);
+                        }
                     }
                 }
             });
