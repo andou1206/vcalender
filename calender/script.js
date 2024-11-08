@@ -3,11 +3,27 @@ document.addEventListener("DOMContentLoaded", function() {
     const calendarBody = document.getElementById("calendarBody");
     const prevMonthButton = document.getElementById("prevMonth");
     const nextMonthButton = document.getElementById("nextMonth");
-    
-    let currentPopup = null; // currentPopupをグローバル変数として宣言
+       
+ 
+    let currentPopup = null;
+
+document.addEventListener("DOMContentLoaded", function() {
+    const cells = document.querySelectorAll(".date-column, .weekday-column");
+
+    cells.forEach(cell => resizeText(cell));
+});
+
+function resizeText(cell) {
+    let fontSize = parseFloat(window.getComputedStyle(cell).fontSize);
+
+    while (cell.scrollWidth > cell.clientWidth && fontSize > 10) {  // 最小フォントサイズを10pxに設定
+        fontSize -= 1;
+        cell.style.fontSize = fontSize + "px";
+    }
+}
+
 
     function showPopup(event, row) {
-        // 既存のポップアップがあれば削除
         if (currentPopup) {
             currentPopup.remove();
         }
@@ -15,7 +31,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const popup = document.createElement("div");
         popup.classList.add("popup");
 
-        // x.png の表示
         if (row[6]) {
             const xIcon = document.createElement("img");
             xIcon.src = "https://vcalender.blob.core.windows.net/icons/x.png";
@@ -24,7 +39,6 @@ document.addEventListener("DOMContentLoaded", function() {
             popup.appendChild(xIcon);
         }
 
-        // youtube.png の表示
         if (row[7]) {
             const youtubeIcon = document.createElement("img");
             youtubeIcon.src = "https://vcalender.blob.core.windows.net/icons/youtube.png";
@@ -33,13 +47,12 @@ document.addEventListener("DOMContentLoaded", function() {
             popup.appendChild(youtubeIcon);
         }
 
-        // ポップアップ位置を調整して表示
         popup.style.position = "absolute";
         popup.style.left = `${event.clientX}px`;
         popup.style.top = `${event.clientY - 60}px`;
 
         document.body.appendChild(popup);
-        currentPopup = popup; // 現在のポップアップを更新
+        currentPopup = popup;
     }
 
     function loadCSVAndUpdateCalendar() {
@@ -70,18 +83,15 @@ document.addEventListener("DOMContentLoaded", function() {
         for (let date = 1; date <= lastDate; date++) {
             const row = document.createElement("tr");
 
-            // 本日日付の行に直接スタイルを適用
             const today = new Date();
             if (year === today.getFullYear() && month === today.getMonth() && date === today.getDate()) {
                 row.style.backgroundColor = "lightyellow";
             }
 
-            // 日付
             const dateCell = document.createElement("td");
             dateCell.textContent = date;
             row.appendChild(dateCell);
 
-            // 曜日
             const day = new Date(year, month, date).getDay();
             const dayCell = document.createElement("td");
             dayCell.textContent = ["日", "月", "火", "水", "木", "金", "土"][day];
@@ -89,19 +99,16 @@ document.addEventListener("DOMContentLoaded", function() {
             if (day === 6) dayCell.classList.add("saturday");
             row.appendChild(dayCell);
 
-            // 誕生日
             const birthdayCell = document.createElement("td");
             const formattedDate = `${month + 1}/${date}`;
             const birthdayEvents = [];
 
             csvData.forEach(row => {
-                // 10列目が空欄でない場合はスキップ
                 if (row[10] && row[10].trim() !== "") return;
 
-                // 誕生日イベントの表示
                 if (row[0] === formattedDate && row[1]) {
                     let iconImg = "";
-                    switch (row[2]) { // 2列目の値に基づき画像ファイルを指定
+                    switch (row[2]) {
                         case "にじさんじ": iconImg = "nijisannji.png"; break;
                         case "ホロライブ": iconImg = "hololive.png"; break;
                         case ".LIVE": iconImg = "dootolive.png"; break;
@@ -129,15 +136,12 @@ document.addEventListener("DOMContentLoaded", function() {
             birthdayEvents.forEach(event => birthdayCell.appendChild(event));
             row.appendChild(birthdayCell);
 
-            // 記念日
             const commemorationCell = document.createElement("td");
             const commemorationEvents = [];
 
             csvData.forEach(row => {
-                // 10列目が空欄でない場合はスキップ
                 if (row[10] && row[10].trim() !== "") return;
 
-                // 記念日イベントの表示
                 if (row[5]) {
                     const [eventYear, eventMonth, eventDate] = row[5].split("/").map(Number);
                     if (eventMonth === month + 1 && eventDate === date && row[1]) {
@@ -178,11 +182,19 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     prevMonthButton.addEventListener("click", () => {
+        if (currentPopup) {
+            currentPopup.remove();
+            currentPopup = null;
+        }
         currentDate.setMonth(currentDate.getMonth() - 1);
         loadCSVAndUpdateCalendar();
     });
 
     nextMonthButton.addEventListener("click", () => {
+        if (currentPopup) {
+            currentPopup.remove();
+            currentPopup = null;
+        }
         currentDate.setMonth(currentDate.getMonth() + 1);
         loadCSVAndUpdateCalendar();
     });

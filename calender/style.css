@@ -1,3 +1,4 @@
+/* CSS スタイル */
 body {
     font-family: 'Roboto', sans-serif;
     background-color: #e9f5fc;
@@ -7,11 +8,12 @@ body {
     height: 100vh;
     margin: 0;
     padding: 20px;
+    box-sizing: border-box;
 }
 
 .calendar {
     background-color: #ffffff;
-    padding: 20px;
+    padding: 10px;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     width: 90vw; /* 画面幅に対応 */
@@ -21,10 +23,20 @@ body {
     transition: all 0.3s ease;
 }
 
+.date-column, .weekday-column {
+    width: 1%;
+    padding: 4px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+
+
 .calendar:hover {
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
+/* ヘッダー */
 .header {
     display: flex;
     justify-content: space-between;
@@ -54,6 +66,7 @@ button:hover {
     background-color: #357ABD;
 }
 
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -61,12 +74,9 @@ table {
 
 th, td {
     border: 1px solid #e0e0e0;
-    padding: 12px;
+    padding: 4px;
     text-align: center;
     font-size: 1.2em;
-    border-radius: 8px;
-    transition: background-color 0.2s;
-    white-space: nowrap; /* 1行で表示を固定 */
 }
 
 td {
@@ -79,9 +89,9 @@ td:hover {
 
 thead th {
     background-color: #d0eafc;
-    font-size: 1.2em;
     color: #333;
 }
+
 
 .sunday {
     color: #e74c3c;
@@ -93,7 +103,7 @@ thead th {
 
 .birthday, .commemoration {
     width: auto;
-    white-space: nowrap;
+    white-space: normal; /* 自動で折り返し */
 }
 
 /* キラキラ効果 */
@@ -113,30 +123,48 @@ thead th {
     100% { background-position: 0% 50%; }
 }
 
-/* ポップアップ関連 */
+/* ポップアップ */
 .popup {
-    max-width: 90vw; /* 画面幅に応じて調整 */
+    display: flex;
+    align-items: center; /* アイコンとテキストを縦方向で中央揃え */
+    padding: 8px; /* 全体の余白をアイコンのサイズに合わせて微調整 */
     background-color: white;
-    padding: 1vw;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    font-size: 1.5vw;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    max-width: 300px;
 }
 
 .popup-icon {
-    width: 5vw;
-    height: auto;
-    margin: 0.5vw;
+    width: 24px; /* アイコンのサイズを調整 */
+    height: 24px;
+    margin-right: 8px; /* アイコンとテキストの間にスペースを設定 */
 }
 
 /* メディアクエリで小さな画面に対応 */
 @media (max-width: 600px) {
     th, td {
-        font-size: 3vw; /* 小さい画面では文字サイズをさらに調整 */
+        font-size: 3vw;
+    }
+}
+    button {
+        padding: 4px 8px;
+        font-size: 0.9em;
+    }
+
+    th, td {
+        padding: 6px;
+        font-size: 0.8em;
+    }
+}
+
+@media (max-width: 600px) {
+    th, td {
+        font-size: 2.5vw; /* 小さい画面では文字サイズをさらに調整 */
     }
     button {
-        font-size: 4vw;
+        font-size: 3.5vw;
     }
     .popup-icon {
         width: 8vw;
