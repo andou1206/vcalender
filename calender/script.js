@@ -3,25 +3,16 @@ document.addEventListener("DOMContentLoaded", function() {
     const calendarBody = document.getElementById("calendarBody");
     const prevMonthButton = document.getElementById("prevMonth");
     const nextMonthButton = document.getElementById("nextMonth");
-       
- 
+
     let currentPopup = null;
 
-document.addEventListener("DOMContentLoaded", function() {
-    const cells = document.querySelectorAll(".date-column, .weekday-column");
-
-    cells.forEach(cell => resizeText(cell));
-});
-
-function resizeText(cell) {
-    let fontSize = parseFloat(window.getComputedStyle(cell).fontSize);
-
-    while (cell.scrollWidth > cell.clientWidth && fontSize > 10) {  // 最小フォントサイズを10pxに設定
-        fontSize -= 1;
-        cell.style.fontSize = fontSize + "px";
-    }
-}
-
+    // 全体のクリックイベントリスナー
+    document.addEventListener("click", function(event) {
+        if (currentPopup && !currentPopup.contains(event.target)) {
+            currentPopup.remove();
+            currentPopup = null;
+        }
+    });
 
     function showPopup(event, row) {
         if (currentPopup) {
@@ -53,6 +44,9 @@ function resizeText(cell) {
 
         document.body.appendChild(popup);
         currentPopup = popup;
+
+        // イベントがポップアップ内で処理されるのを防止
+        event.stopPropagation();
     }
 
     function loadCSVAndUpdateCalendar() {
