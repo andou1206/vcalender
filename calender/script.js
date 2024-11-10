@@ -3,16 +3,25 @@ document.addEventListener("DOMContentLoaded", function() {
     const calendarBody = document.getElementById("calendarBody");
     const prevMonthButton = document.getElementById("prevMonth");
     const nextMonthButton = document.getElementById("nextMonth");
-
+       
+ 
     let currentPopup = null;
 
-    // 全体のクリックイベントリスナー
-    document.addEventListener("click", function(event) {
-        if (currentPopup && !currentPopup.contains(event.target)) {
-            currentPopup.remove();
-            currentPopup = null;
-        }
-    });
+document.addEventListener("DOMContentLoaded", function() {
+    const cells = document.querySelectorAll(".date-column, .weekday-column");
+
+    cells.forEach(cell => resizeText(cell));
+});
+
+function resizeText(cell) {
+    let fontSize = parseFloat(window.getComputedStyle(cell).fontSize);
+
+    while (cell.scrollWidth > cell.clientWidth && fontSize > 10) {  // 最小フォントサイズを10pxに設定
+        fontSize -= 1;
+        cell.style.fontSize = fontSize + "px";
+    }
+}
+
 
     function showPopup(event, row) {
         if (currentPopup) {
@@ -30,13 +39,23 @@ document.addEventListener("DOMContentLoaded", function() {
             popup.appendChild(xIcon);
         }
 
-        if (row[7]) {
-            const youtubeIcon = document.createElement("img");
-            youtubeIcon.src = "https://vcalender.blob.core.windows.net/icons/youtube.png";
-            youtubeIcon.classList.add("popup-icon");
-            youtubeIcon.addEventListener("click", () => window.open(row[7], "_blank"));
-            popup.appendChild(youtubeIcon);
-        }
+if (row[7]) {
+    let youtubeIcon = null;
+
+    if (row[7].startsWith("https://www")) {
+        youtubeIcon = document.createElement("img");
+        youtubeIcon.src = "https://vcalender.blob.core.windows.net/icons/youtube.png";
+    } else if (row[7].startsWith("https://space")) {
+        youtubeIcon = document.createElement("img");
+        youtubeIcon.src = "https://vcalender.blob.core.windows.net/icons/bilibili.png";
+    }
+
+    if (youtubeIcon) {
+        youtubeIcon.classList.add("popup-icon");
+        youtubeIcon.addEventListener("click", () => window.open(row[7], "_blank"));
+        popup.appendChild(youtubeIcon);
+    }
+}
 
         popup.style.position = "absolute";
         popup.style.left = `${event.clientX}px`;
@@ -44,9 +63,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         document.body.appendChild(popup);
         currentPopup = popup;
-
-        // イベントがポップアップ内で処理されるのを防止
-        event.stopPropagation();
     }
 
     function loadCSVAndUpdateCalendar() {
