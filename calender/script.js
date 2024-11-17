@@ -26,6 +26,12 @@ calendarGuide.innerHTML = ` 名前をタップすると<span style="color: blue;
         const popup = document.createElement("div");
         popup.classList.add("popup");
 
+        // クリックしたイベント名を虹色で表示
+        const popupTitle = document.createElement("div");
+        popupTitle.classList.add("popup-title");
+        popupTitle.textContent = row[1];
+        popup.appendChild(popupTitle);
+
         if (row[6]) {
             const xIcon = document.createElement("img");
             xIcon.src = "https://vcalender.blob.core.windows.net/icons/x.png";
