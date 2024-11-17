@@ -6,6 +6,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let currentPopup = null;
 
+// 案内文を設定
+calendarGuide.innerHTML = ` 名前をタップすると<span style="color: blue; text-decoration: underline;">YouTube</span> や <span style="color: green; text-decoration: underline;">X (旧Twitter)</span> に移動できます。 `;
+
+
     // 全体のクリックイベントリスナー
     document.addEventListener("click", function(event) {
         if (currentPopup && !currentPopup.contains(event.target)) {
@@ -30,23 +34,23 @@ document.addEventListener("DOMContentLoaded", function() {
             popup.appendChild(xIcon);
         }
 
-if (row[7]) {
-    let youtubeIcon = null;
+        if (row[7]) {
+            let youtubeIcon = null;
 
-    if (row[7].startsWith("https://www")) {
-        youtubeIcon = document.createElement("img");
-        youtubeIcon.src = "https://vcalender.blob.core.windows.net/icons/youtube.png";
-    } else if (row[7].startsWith("https://space")) {
-        youtubeIcon = document.createElement("img");
-        youtubeIcon.src = "https://vcalender.blob.core.windows.net/icons/bilibili.png";
-    }
+            if (row[7].startsWith("https://www")) {
+                youtubeIcon = document.createElement("img");
+                youtubeIcon.src = "https://vcalender.blob.core.windows.net/icons/youtube.png";
+            } else if (row[7].startsWith("https://space")) {
+                youtubeIcon = document.createElement("img");
+                youtubeIcon.src = "https://vcalender.blob.core.windows.net/icons/bilibili.png";
+            }
 
-    if (youtubeIcon) {
-        youtubeIcon.classList.add("popup-icon");
-        youtubeIcon.addEventListener("click", () => window.open(row[7], "_blank"));
-        popup.appendChild(youtubeIcon);
-    }
-}
+            if (youtubeIcon) {
+                youtubeIcon.classList.add("popup-icon");
+                youtubeIcon.addEventListener("click", () => window.open(row[7], "_blank"));
+                popup.appendChild(youtubeIcon);
+            }
+        }
 
         popup.style.position = "absolute";
         popup.style.left = `${event.clientX}px`;
@@ -55,7 +59,6 @@ if (row[7]) {
         document.body.appendChild(popup);
         currentPopup = popup;
 
-        // イベントがポップアップ内で処理されるのを防止
         event.stopPropagation();
     }
 
@@ -70,7 +73,7 @@ if (row[7]) {
     }
 
     function parseCSV(data) {
-        const rows = data.split("\n").map(row => row.split(","));
+        const rows = data.split("\n").map(row => row.split(",").map(cell => cell.trim()));
         return rows;
     }
 
@@ -107,32 +110,28 @@ if (row[7]) {
             const formattedDate = `${month + 1}/${date}`;
             const birthdayEvents = [];
 
-            csvData.forEach(row => {
-                if (row[10] && row[10].trim() !== "") return;
+            const commemorationCell = document.createElement("td");
+            const commemorationEvents = [];
 
-                if (row[0] === formattedDate && row[1]) {
-                    let iconImg = "";
-                    switch (row[2]) {
-                        case "にじさんじ": iconImg = "nijisannji.png"; break;
-                        case "ホロライブ": iconImg = "hololive.png"; break;
-                        case ".LIVE": iconImg = "dootolive.png"; break;
-                        case "Neo-Porte": iconImg = "Neoporte.png"; break;
-                        case "あおぎり高校": iconImg = "aogirikoukou.png"; break;
-                        case "ぶいすぽっ！": iconImg = "vspo.png"; break;
-                        case "のりプロ": iconImg = "noriporo.png"; break;
-                        case "ななしいんく": iconImg = "nanasiinku.png"; break;
-                    }
-                    if (iconImg) {
-                        const birthdayEvent = document.createElement("div");
-                        birthdayEvent.innerHTML = `<img src="https://vcalender.blob.core.windows.net/icons/${iconImg}" 
-                        alt="${row[2]}" style="height:16px; vertical-align:middle;"> ${row[1]}`;
-                        birthdayEvent.addEventListener("click", (event) => showPopup(event, row));
-                        birthdayEvents.push(birthdayEvent);
-                    } else {
-                        const birthdayEvent = document.createElement("div");
-                        birthdayEvent.textContent = row[1];
-                        birthdayEvent.addEventListener("click", (event) => showPopup(event, row));
-                        birthdayEvents.push(birthdayEvent);
+            csvData.forEach(row => {
+                if (!row[0] || !row[1]) return;
+
+                // 誕生日処理
+                if (row[0] === formattedDate) {
+                    const iconImg = getIconForGroup(row[2]);
+                    const birthdayEvent = createEventElement(row[1], iconImg, row);
+                    birthdayEvents.push(birthdayEvent);
+                }
+
+                // 記念日処理
+                if (row[5]) {
+                    const [eventYear, eventMonth, eventDate] = row[5].split("/").map(Number);
+                    if (eventMonth === month + 1 && eventDate === date) {
+                        const yearsSince = year - eventYear;
+                        const iconImg = getIconForGroup(row[2]);
+                        const glitterText = `${row[1]} <span class="glitter-text">${yearsSince}周年</span>`;
+                        const commemorationEvent = createEventElement(glitterText, iconImg, row);
+                        commemorationEvents.push(commemorationEvent);
                     }
                 }
             });
@@ -140,49 +139,37 @@ if (row[7]) {
             birthdayEvents.forEach(event => birthdayCell.appendChild(event));
             row.appendChild(birthdayCell);
 
-            const commemorationCell = document.createElement("td");
-            const commemorationEvents = [];
-
-            csvData.forEach(row => {
-                if (row[10] && row[10].trim() !== "") return;
-
-                if (row[5]) {
-                    const [eventYear, eventMonth, eventDate] = row[5].split("/").map(Number);
-                    if (eventMonth === month + 1 && eventDate === date && row[1]) {
-                        const yearsSince = year - eventYear;
-                        let iconImg = "";
-                        switch (row[2]) {
-                            case "にじさんじ": iconImg = "nijisannji.png"; break;
-                            case "ホロライブ": iconImg = "hololive.png"; break;
-                            case ".LIVE": iconImg = "dootolive.png"; break;
-                            case "Neo-Porte": iconImg = "Neoporte.png"; break;
-                            case "あおぎり高校": iconImg = "aogirikoukou.png"; break;
-                            case "ぶいすぽっ！": iconImg = "vspo.png"; break;
-                            case "のりプロ": iconImg = "noriporo.png"; break;
-                            case "ななしいんく": iconImg = "nanasiinku.png"; break;
-                        }
-                        const glitterEvent = `${row[1]} <span class="glitter-text">${yearsSince}周年</span>`;
-                        if (iconImg) {
-                            const commemorationEvent = document.createElement("div");
-                            commemorationEvent.innerHTML = `<img src="https://vcalender.blob.core.windows.net/icons/${iconImg}" 
-                            alt="${row[2]}" style="height:16px; vertical-align:middle;"> ${glitterEvent}`;
-                            commemorationEvent.addEventListener("click", (event) => showPopup(event, row));
-                            commemorationEvents.push(commemorationEvent);
-                        } else {
-                            const commemorationEvent = document.createElement("div");
-                            commemorationEvent.innerHTML = glitterEvent;
-                            commemorationEvent.addEventListener("click", (event) => showPopup(event, row));
-                            commemorationEvents.push(commemorationEvent);
-                        }
-                    }
-                }
-            });
-
             commemorationEvents.forEach(event => commemorationCell.appendChild(event));
             row.appendChild(commemorationCell);
 
             calendarBody.appendChild(row);
         }
+    }
+
+    function getIconForGroup(group) {
+        const icons = {
+            "にじさんじ": "nijisannji.png",
+            "ホロライブ": "hololive.png",
+            ".LIVE": "dootolive.png",
+            "Neo-Porte": "Neoporte.png",
+            "あおぎり高校": "aogirikoukou.png",
+            "ぶいすぽっ！": "vspo.png",
+            "のりプロ": "noriporo.png",
+            "ななしいんく": "nanasiinku.png"
+        };
+        return icons[group] || "";
+    }
+
+    function createEventElement(content, iconImg, row) {
+        const eventElement = document.createElement("div");
+        if (iconImg) {
+            eventElement.innerHTML = `<img src="https://vcalender.blob.core.windows.net/icons/${iconImg}" 
+            alt="${row[2]}" style="height:16px; vertical-align:middle;"> ${content}`;
+        } else {
+            eventElement.textContent = content;
+        }
+        eventElement.addEventListener("click", (event) => showPopup(event, row));
+        return eventElement;
     }
 
     prevMonthButton.addEventListener("click", () => {
