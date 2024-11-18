@@ -7,10 +7,10 @@ module.exports = async function (context, myTimer) {
 
     // Twitter API クライアント
     const twitterClient = new TwitterApi({
-        appKey: 'YOUR_API_KEY',
-        appSecret: 'YOUR_API_SECRET',
-        accessToken: 'YOUR_ACCESS_TOKEN',
-        accessSecret: 'YOUR_ACCESS_SECRET',
+        appKey: 'fH4SDztHcPqFv7IlwU3XJsiU1',
+        appSecret: 'CEouDs3cmIRrbcF2dNcRtAEz9fg3uBhYWFfQMJQ1pJxBgUkuAs',
+        accessToken: '1855610904093827072-YjKsmqVfqBk61KJvSvImzG6siIg5nO',
+        accessSecret: 'F1jNyepDWWjgESqCHG6HyVWWBUFNtU711Gx6OMXp97FPs',
     });
 
     try {
@@ -25,7 +25,7 @@ module.exports = async function (context, myTimer) {
 
             // 当日イベント処理
             if (row[0] === formattedDate) {
-                postMessages.push(`🎉 本日は ${row[1]} さんのお誕生日です！おめでとうございます！🎂`);
+                postMessages.push(`🎉 本日は ${row[1]} 様のお誕生日です！おめでとうございます！🎂`);
             }
 
             // 記念日イベント処理
@@ -34,7 +34,7 @@ module.exports = async function (context, myTimer) {
                 const today = new Date();
                 if (month === today.getMonth() + 1 && day === today.getDate()) {
                     const yearsSince = today.getFullYear() - year;
-                    postMessages.push(`✨ ${row[1]} の記念日！${yearsSince}周年をお祝いしましょう！`);
+                    postMessages.push(`✨ ${row[1]} 様の${yearsSince}周年をお祝いしましょう！`);
                 }
             }
         });
