@@ -3,13 +3,27 @@ body {
     font-family: 'Roboto', sans-serif;
     background-color: #e9f5fc;
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column; /* 縦方向に並べる */
+    justify-content: flex-start; /* 上から順に配置 */
+    align-items: center; /* 中央揃え */
     height: 100vh;
     margin: 0;
     padding: 20px;
     box-sizing: border-box;
 }
+
+.affiliate-banner {
+    text-align: center;
+    margin-bottom: 10px; /* カレンダーとの間に余白を設定 */
+}
+
+.affiliate-banner img {
+    max-width: 100%; /* バナー画像を画面幅に合わせる */
+    height: auto; /* アスペクト比を維持 */
+    border-radius: 5px; /* 必要に応じて角を丸くする */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* バナーに影を付ける */
+}
+
 
 .calendar {
     background-color: #ffffff;
