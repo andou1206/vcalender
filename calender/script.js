@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
+
+
+
     const monthYearElement = document.getElementById("monthYear");
     const calendarBody = document.getElementById("calendarBody");
     const prevMonthButton = document.getElementById("prevMonth");
@@ -25,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const popup = document.createElement("div");
         popup.classList.add("popup");
 
-        // クリックしたイベント名を虹色で表示
+        // クリックしたイベント名を表示
         const popupTitle = document.createElement("div");
         popupTitle.classList.add("popup-title");
         popupTitle.textContent = row[1];
