@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const monthYearElement = document.getElementById("monthYear");
     const calendarBody = document.getElementById("calendarBody");
     const prevMonthButton = document.getElementById("prevMonth");
@@ -6,12 +6,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let currentPopup = null;
 
-// 案内文を設定
-calendarGuide.innerHTML = ` 名前をタップすると<span style="color: blue; text-decoration: underline;">YouTube</span> や <span style="color: green; text-decoration: underline;">X (旧Twitter)</span> に移動できます。 `;
-
+    // 案内文を設定
+    calendarGuide.innerHTML = ` 名前をタップすると<span style="color: blue; text-decoration: underline;">YouTube</span> や <span style="color: green; text-decoration: underline;">X (旧Twitter)</span> に移動できます。`;
 
     // 全体のクリックイベントリスナー
-    document.addEventListener("click", function(event) {
+    document.addEventListener("click", function (event) {
         if (currentPopup && !currentPopup.contains(event.target)) {
             currentPopup.remove();
             currentPopup = null;
@@ -113,44 +112,23 @@ calendarGuide.innerHTML = ` 名前をタップすると<span style="color: blue;
             row.appendChild(dayCell);
 
             const birthdayCell = document.createElement("td");
-            const formattedDate = `${month + 1}/${date}`;
             const birthdayEvents = [];
 
-            const commemorationCell = document.createElement("td");
-            const commemorationEvents = [];
+            const formattedDate = `${month + 1}/${date}`;
 
-csvData.forEach(row => {
-    if (!row[0] || !row[1]) return;
+            csvData.forEach(row => {
+                if (!row[0] || !row[1]) return;
 
-    // 10列目が空欄でない場合は処理をスキップ
-    if (row[10] && row[10].trim() !== "") return;
-
-    // 誕生日処理
-    if (row[0] === formattedDate) {
-        const iconImg = getIconForGroup(row[2]);
-        const birthdayEvent = createEventElement(row[1], iconImg, row);
-        birthdayEvents.push(birthdayEvent);
-    }
-
-    // 記念日処理
-    if (row[5]) {
-        const [eventYear, eventMonth, eventDate] = row[5].split("/").map(Number);
-        if (eventMonth === month + 1 && eventDate === date) {
-            const yearsSince = year - eventYear;
-            const iconImg = getIconForGroup(row[2]);
-            const glitterText = `${row[1]} <span class="glitter-text">${yearsSince}周年</span>`;
-            const commemorationEvent = createEventElement(glitterText, iconImg, row);
-            commemorationEvents.push(commemorationEvent);
-        }
-    }
-});
-
+                // 誕生日処理
+                if (row[0] === formattedDate) {
+                    const iconImg = getIconForGroup(row[2]);
+                    const birthdayEvent = createEventElement(row[1], iconImg, row);
+                    birthdayEvents.push(birthdayEvent);
+                }
+            });
 
             birthdayEvents.forEach(event => birthdayCell.appendChild(event));
             row.appendChild(birthdayCell);
-
-            commemorationEvents.forEach(event => commemorationCell.appendChild(event));
-            row.appendChild(commemorationCell);
 
             calendarBody.appendChild(row);
         }
@@ -165,7 +143,9 @@ csvData.forEach(row => {
             "あおぎり高校": "aogirikoukou.png",
             "ぶいすぽっ！": "vspo.png",
             "のりプロ": "noriporo.png",
-            "ななしいんく": "nanasiinku.png"
+            "ななしいんく": "nanasiinku.png",
+            "ホロスターズ": "holostars.jpg", 
+            "VirtuaReal": "VirtuaReal.png" 
         };
         return icons[group] || "";
     }
