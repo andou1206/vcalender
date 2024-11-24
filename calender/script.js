@@ -119,6 +119,9 @@ document.addEventListener("DOMContentLoaded", function () {
             csvData.forEach(row => {
                 if (!row[0] || !row[1]) return;
 
+   		 // 10列目が空欄でない場合は処理をスキップ
+    		if (row[10] && row[10].trim() !== "") return;
+
                 // 誕生日処理
                 if (row[0] === formattedDate) {
                     const iconImg = getIconForGroup(row[2]);
