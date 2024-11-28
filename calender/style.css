@@ -3,10 +3,10 @@ body {
     font-family: 'Roboto', sans-serif;
     background-color: #e9f5fc;
     display: flex;
-    flex-direction: column; /* 縦方向に並べる */
-    justify-content: flex-start; /* 上から順に配置 */
-    align-items: center; /* 中央揃え */
-    height: auto; /* 必要に応じて高さを自動調整 */
+    flex-direction: column; 
+    justify-content: flex-start; 
+    align-items: center;
+    height: auto; 
     margin: 0;
     padding: 20px;
     box-sizing: border-box;
@@ -15,14 +15,14 @@ body {
 
 .affiliate-banner {
     text-align: center;
-    margin-bottom: 10px; /* カレンダーとの間に余白を設定 */
+    margin-bottom: 10px; 
 }
 
 .affiliate-banner img {
-    max-width: 100%; /* バナー画像を画面幅に合わせる */
-    height: auto; /* アスペクト比を維持 */
-    border-radius: 5px; /* 必要に応じて角を丸くする */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* バナーに影を付ける */
+    max-width: 100%; 
+    height: auto;
+    border-radius: 5px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -31,12 +31,12 @@ body {
     padding: 10px;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    width: 90vw; /* 画面幅に対応 */
+    width: 90vw; 
     max-width: 600px;
     max-height: 90vh;
     overflow-y: auto;
     transition: all 0.3s ease;
-    overflow: hidden; /* 必要に応じて親要素のスクロールも非表示 */
+    overflow: hidden; 
 }
 
 .date-column, .weekday-column {
@@ -119,10 +119,10 @@ thead th {
 
 .birthday, .commemoration {
     width: auto;
-    white-space: normal; /* 自動で折り返し */
+    white-space: normal; 
 }
 
-/* キラキラ効果 */
+
 .glitter-text {
     color: #f39c12;
     font-weight: bold;
@@ -139,11 +139,11 @@ thead th {
     100% { background-position: 0% 50%; }
 }
 
-/* ポップアップ */
+
 .popup {
     display: flex;
-    align-items: center; /* アイコンとテキストを縦方向で中央揃え */
-    padding: 8px; /* 全体の余白をアイコンのサイズに合わせて微調整 */
+    align-items: center; 
+    padding: 8px; 
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -153,12 +153,12 @@ thead th {
 }
 
 .popup-icon {
-    width: 24px; /* アイコンのサイズを調整 */
+    width: 24px; 
     height: 24px;
-    margin-right: 8px; /* アイコンとテキストの間にスペースを設定 */
+    margin-right: 8px; 
 }
 
-/* メディアクエリで小さな画面に対応 */
+
 @media (max-width: 600px) {
     th, td {
         font-size: 3vw;
@@ -177,7 +177,7 @@ thead th {
 
 @media (max-width: 600px) {
     th, td {
-        font-size: 2.5vw; /* 小さい画面では文字サイズをさらに調整 */
+        font-size: 2.5vw; 
     }
     button {
         font-size: 3.5vw;
@@ -189,7 +189,7 @@ thead th {
 
 .calendar-container {
     overflow-y: auto;
-    max-height: 70vh; /* 高さを画面に合わせて制限 */
+    max-height: 70vh; 
 }
 
 
@@ -198,7 +198,7 @@ thead th {
     .popup-title {
         font-size: 10px;
         font-weight: bold;
-        background: linear-gradient(to right, #FF7E5F, #FEB47B); /* オレンジからピンクへの暖かいグラデーション */
+        background: linear-gradient(to right, #FF7E5F, #FEB47B); 
         -webkit-background-clip: text;
         color: transparent;
     }
@@ -206,22 +206,22 @@ thead th {
 
 @media (max-width: 600px) {
     #bannerGrid {
-        grid-template-columns: repeat(2, 1fr); /* 横2列 */
+        grid-template-columns: repeat(2, 1fr); 
     }
 }
 
 @media (max-width: 400px) {
     #bannerGrid {
-        grid-template-columns: 1fr; /* 横1列 */
+        grid-template-columns: 1fr; 
     }
 }
 
         #bannerGrid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 横に3列 */
-            gap: 10px; /* バナー間の隙間 */
-            max-width: 720px; /* コンテンツの幅を制限 */
-            margin: 20px auto; /* 中央寄せ */
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+            max-width: 720px; 
+            margin: 20px auto; 
         }
 
         .banner {
@@ -233,19 +233,18 @@ thead th {
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-/* グリッド全体の設定 */
+
 #bannerGrid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4列を均等に分割 */
-    gap: 10px; /* 各バナー間の間隔 */
-    width: 100%; /* 親要素の幅いっぱい */
-    max-width: 600px; /* 最大幅を制限 */
-    margin: 0 auto; /* 中央揃え */
-    padding: 0; /* 余白をなくす */
-    box-sizing: border-box; /* パディングを含めて幅を計算 */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 10px; 
+    width: 100%; 
+    max-width: 600px; 
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box; 
 }
 
-/* 各バナーアイテム */
 .banner {
     text-align: center;
     border: 1px solid #ccc;
@@ -255,10 +254,9 @@ thead th {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* バナー内の画像設定 */
 .banner img {
-    width: 100%; /* 親要素の幅に合わせる */
-    height: auto; /* 高さはアスペクト比に基づいて調整 */
+    width: 100%;
+    height: auto; 
 }
 
 
