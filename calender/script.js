@@ -1,24 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
-
-
-
     const monthYearElement = document.getElementById("monthYear");
     const calendarBody = document.getElementById("calendarBody");
     const prevMonthButton = document.getElementById("prevMonth");
     const nextMonthButton = document.getElementById("nextMonth");
 
     let currentPopup = null;
-
-    // 案内文を設定
-    calendarGuide.innerHTML = ` 名前をタップすると<span style="color: blue; text-decoration: underline;">YouTube</span> や <span style="color: green; text-decoration: underline;">X (旧Twitter)</span> に移動できます。`;
-
-    // 全体のクリックイベントリスナー
-    document.addEventListener("click", function (event) {
-        if (currentPopup && !currentPopup.contains(event.target)) {
-            currentPopup.remove();
-            currentPopup = null;
-        }
-    });
+    const currentDate = new Date();
 
     function showPopup(event, row) {
         if (currentPopup) {
@@ -28,7 +15,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const popup = document.createElement("div");
         popup.classList.add("popup");
 
-        // クリックしたイベント名を表示
         const popupTitle = document.createElement("div");
         popupTitle.classList.add("popup-title");
         popupTitle.textContent = row[1];
@@ -95,35 +81,38 @@ document.addEventListener("DOMContentLoaded", function () {
         const firstDay = new Date(year, month, 1).getDay();
         const lastDate = new Date(year, month + 1, 0).getDate();
 
-        for (let date = 1; date <= lastDate; date++) {
+        for (let day = 1; day <= lastDate; day++) {
             const row = document.createElement("tr");
 
             const today = new Date();
-            if (year === today.getFullYear() && month === today.getMonth() && date === today.getDate()) {
+            if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
                 row.style.backgroundColor = "lightyellow";
             }
 
             const dateCell = document.createElement("td");
-            dateCell.textContent = date;
+            dateCell.textContent = day;
             row.appendChild(dateCell);
 
-            const day = new Date(year, month, date).getDay();
+            const weekday = new Date(year, month, day).getDay();
             const dayCell = document.createElement("td");
-            dayCell.textContent = ["日", "月", "火", "水", "木", "金", "土"][day];
-            if (day === 0) dayCell.classList.add("sunday");
-            if (day === 6) dayCell.classList.add("saturday");
+            dayCell.textContent = ["日", "月", "火", "水", "木", "金", "土"][weekday];
+            if (weekday === 0) dayCell.classList.add("sunday");
+            if (weekday === 6) dayCell.classList.add("saturday");
             row.appendChild(dayCell);
 
             const birthdayCell = document.createElement("td");
             const birthdayEvents = [];
 
-            const formattedDate = `${month + 1}/${date}`;
+            const commemorationCell = document.createElement("td");
+            const commemorationEvents = [];
+
+            const formattedDate = `${month + 1}/${day}`;
 
             csvData.forEach(row => {
                 if (!row[0] || !row[1]) return;
 
-   		 // 10列目が空欄でない場合は処理をスキップ
-    		if (row[10] && row[10].trim() !== "") return;
+                // 10列目が空欄でない場合は処理をスキップ
+                if (row[10] && row[10].trim() !== "") return;
 
                 // 誕生日処理
                 if (row[0] === formattedDate) {
@@ -131,10 +120,30 @@ document.addEventListener("DOMContentLoaded", function () {
                     const birthdayEvent = createEventElement(row[1], iconImg, row);
                     birthdayEvents.push(birthdayEvent);
                 }
+
+                // 記念日処理
+                if (row[5]) {
+                    const [eventYear, eventMonth, eventDate] = row[5].split("/").map(Number);
+                    const yearsSince = year - eventYear;
+                    const eventMmDd = `${eventMonth}/${eventDate}`;
+
+                    // カレンダーの日付が記念日の日付と一致しているか確認
+                    if (eventYear < year && eventMmDd === formattedDate) {
+                        const iconImg = getIconForGroup(row[2]);
+                        const glitterText = `${row[1]} <span class="glitter-text">${yearsSince}周年</span>`;
+                        const commemorationEvent = document.createElement("div");
+
+                        commemorationEvent.innerHTML = `${iconImg ? `<img src='https://vcalender.blob.core.windows.net/icons/${iconImg}' alt='${row[2]}' style='height:16px; vertical-align:middle;'> ` : ''}${glitterText}`;
+                        commemorationEvents.push(commemorationEvent);
+                    }
+                }
             });
 
             birthdayEvents.forEach(event => birthdayCell.appendChild(event));
             row.appendChild(birthdayCell);
+
+            commemorationEvents.forEach(event => commemorationCell.appendChild(event));
+            row.appendChild(commemorationCell);
 
             calendarBody.appendChild(row);
         }
@@ -186,6 +195,5 @@ document.addEventListener("DOMContentLoaded", function () {
         loadCSVAndUpdateCalendar();
     });
 
-    const currentDate = new Date();
     loadCSVAndUpdateCalendar();
 });
