@@ -7,74 +7,85 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentPopup = null;
     const currentDate = new Date();
 
-    document.addEventListener("click", function (event) {
-        if (currentPopup && !currentPopup.contains(event.target)) {
-            currentPopup.remove();
-            currentPopup = null;
+const iconImages = [
+    "https://vcalender.blob.core.windows.net/icons/x.png",
+    "https://vcalender.blob.core.windows.net/icons/youtube.png",
+    "https://vcalender.blob.core.windows.net/icons/bilibili.png"
+];
+
+iconImages.forEach(src => {
+    const img = new Image();
+    img.src = src;
+});
+
+function showPopup(event, row) {
+
+    if (currentPopup) {
+        currentPopup.remove();
+    }
+
+    const popup = document.createElement("div");
+    popup.classList.add("popup");
+
+    const popupTitle = document.createElement("div");
+    popupTitle.classList.add("popup-title");
+    popupTitle.textContent = row[1];
+    popup.appendChild(popupTitle);
+
+    if (row[6]) {
+        const xIcon = document.createElement("img");
+        xIcon.src = "https://vcalender.blob.core.windows.net/icons/x.png";
+        xIcon.classList.add("popup-icon");
+        xIcon.addEventListener("click", () => {
+            window.open(row[6], "_blank");
+            if (currentPopup) {
+                currentPopup.remove();
+                currentPopup = null;
+            }
+        });
+        popup.appendChild(xIcon);
+    }
+
+    if (row[7]) {
+        let youtubeIcon = null;
+
+        if (row[7].startsWith("https://www")) {
+            youtubeIcon = document.createElement("img");
+            youtubeIcon.src = "https://vcalender.blob.core.windows.net/icons/youtube.png";
+        } else if (row[7].startsWith("https://space")) {
+            youtubeIcon = document.createElement("img");
+            youtubeIcon.src = "https://vcalender.blob.core.windows.net/icons/bilibili.png";
         }
-    });
 
-    function showPopup(event, row) {
-        if (currentPopup) {
-            currentPopup.remove();
-        }
-
-        const popup = document.createElement("div");
-        popup.classList.add("popup");
-
-        const popupTitle = document.createElement("div");
-        popupTitle.classList.add("popup-title");
-        popupTitle.textContent = row[1];
-        popup.appendChild(popupTitle);
-
-        if (row[6]) {
-            const xIcon = document.createElement("img");
-            xIcon.src = "https://vcalender.blob.core.windows.net/icons/x.png";
-            xIcon.classList.add("popup-icon");
-            xIcon.addEventListener("click", () => {
-                window.open(row[6], "_blank");
+        if (youtubeIcon) {
+            youtubeIcon.classList.add("popup-icon");
+            youtubeIcon.addEventListener("click", () => {
+                window.open(row[7], "_blank");
                 if (currentPopup) {
                     currentPopup.remove();
                     currentPopup = null;
                 }
             });
-            popup.appendChild(xIcon);
+            popup.appendChild(youtubeIcon);
         }
-
-        if (row[7]) {
-            let youtubeIcon = null;
-
-            if (row[7].startsWith("https://www")) {
-                youtubeIcon = document.createElement("img");
-                youtubeIcon.src = "https://vcalender.blob.core.windows.net/icons/youtube.png";
-            } else if (row[7].startsWith("https://space")) {
-                youtubeIcon = document.createElement("img");
-                youtubeIcon.src = "https://vcalender.blob.core.windows.net/icons/bilibili.png";
-            }
-
-            if (youtubeIcon) {
-                youtubeIcon.classList.add("popup-icon");
-                youtubeIcon.addEventListener("click", () => {
-                    window.open(row[7], "_blank");
-                    if (currentPopup) {
-                        currentPopup.remove();
-                        currentPopup = null;
-                    }
-                });
-                popup.appendChild(youtubeIcon);
-            }
-        }
-
-        popup.style.position = "absolute";
-        popup.style.left = `${event.clientX}px`;
-        popup.style.top = `${event.clientY - 60}px`;
-
-        document.body.appendChild(popup);
-        currentPopup = popup;
-
-        event.stopPropagation();
     }
 
+    popup.style.position = "absolute";
+    popup.style.left = `${event.clientX}px`;
+    popup.style.top = `${event.clientY - 60}px`;
+
+    document.body.appendChild(popup);
+    currentPopup = popup;
+
+    event.stopPropagation();
+}
+
+document.addEventListener("click", function (event) {
+    if (currentPopup && !currentPopup.contains(event.target)) {
+        currentPopup.remove();
+        currentPopup = null;
+    }
+});
     function loadCSVAndUpdateCalendar() {
         fetch("https://vcalender.blob.core.windows.net/testdata/マスタ.csv")
             .then(response => response.text())
@@ -123,10 +134,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const formattedDate = `${month + 1}/${day}`;
 
 csvData.forEach(row => {
-    // 10列目が空欄でない場合は処理をスキップ
+
     if (row[10] && row[10].trim() !== "") return;
 
-    // 誕生日処理
     if (row[0] && row[1]) {
         if (row[0] === formattedDate) {
             const iconImg = getIconForGroup(row[2]);
@@ -136,13 +146,11 @@ csvData.forEach(row => {
         }
     }
 
-    // 記念日処理
     if (row[5]) {
         const [eventYear, eventMonth, eventDate] = row[5].split("/").map(Number);
         const yearsSince = year - eventYear;
         const eventMmDd = `${eventMonth}/${eventDate}`;
 
-        // カレンダーの日付が記念日の日付と一致しているか確認
         if (eventYear < year && eventMmDd === formattedDate) {
             const iconImg = getIconForGroup(row[2]);
             const glitterText = `${row[1]} <span class="glitter-text">${yearsSince}周年</span>`;
