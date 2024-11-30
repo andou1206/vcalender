@@ -123,47 +123,45 @@ document.addEventListener("DOMContentLoaded", function () {
             const formattedDate = `${month + 1}/${day}`;
 
 csvData.forEach(row => {
+    // 10列目が空欄でない場合は処理をスキップ
+    if (row[10] && row[10].trim() !== "") return;
+
     // 誕生日処理
     if (row[0] && row[1]) {
         if (row[0] === formattedDate) {
             const iconImg = getIconForGroup(row[2]);
             const birthdayEvent = createEventElement(row[1], iconImg, row);
-	    birthdayEvent.addEventListener("click", (event) => showPopup(event, row)); 
+            birthdayEvent.addEventListener("click", (event) => showPopup(event, row)); 
             birthdayEvents.push(birthdayEvent);
         }
     }
 
-                // 10列目が空欄でない場合は処理をスキップ
-                if (row[10] && row[10].trim() !== "") return;
+    // 記念日処理
+    if (row[5]) {
+        const [eventYear, eventMonth, eventDate] = row[5].split("/").map(Number);
+        const yearsSince = year - eventYear;
+        const eventMmDd = `${eventMonth}/${eventDate}`;
 
+        // カレンダーの日付が記念日の日付と一致しているか確認
+        if (eventYear < year && eventMmDd === formattedDate) {
+            const iconImg = getIconForGroup(row[2]);
+            const glitterText = `${row[1]} <span class="glitter-text">${yearsSince}周年</span>`;
+            const commemorationEvent = document.createElement("div");
 
+            commemorationEvent.innerHTML = `${iconImg ? `<img src='https://vcalender.blob.core.windows.net/icons/${iconImg}' alt='${row[2]}' style='height:16px; vertical-align:middle;'> ` : ''}${glitterText}`;
+            commemorationEvent.addEventListener("click", (event) => showPopup(event, row)); 
+            commemorationEvents.push(commemorationEvent);
+        }
+    }
+});
 
-                // 記念日処理
-                if (row[5]) {
-                    const [eventYear, eventMonth, eventDate] = row[5].split("/").map(Number);
-                    const yearsSince = year - eventYear;
-                    const eventMmDd = `${eventMonth}/${eventDate}`;
+birthdayEvents.forEach(event => birthdayCell.appendChild(event));
+row.appendChild(birthdayCell);
 
-                    // カレンダーの日付が記念日の日付と一致しているか確認
-                    if (eventYear < year && eventMmDd === formattedDate) {
-                        const iconImg = getIconForGroup(row[2]);
-                        const glitterText = `${row[1]} <span class="glitter-text">${yearsSince}周年</span>`;
-                        const commemorationEvent = document.createElement("div");
+commemorationEvents.forEach(event => commemorationCell.appendChild(event));
+row.appendChild(commemorationCell);
 
-                        commemorationEvent.innerHTML = `${iconImg ? `<img src='https://vcalender.blob.core.windows.net/icons/${iconImg}' alt='${row[2]}' style='height:16px; vertical-align:middle;'> ` : ''}${glitterText}`;
-		        commemorationEvent.addEventListener("click", (event) => showPopup(event, row)); 
-                        commemorationEvents.push(commemorationEvent);
-                    }
-                }
-            });
-
-            birthdayEvents.forEach(event => birthdayCell.appendChild(event));
-            row.appendChild(birthdayCell);
-
-            commemorationEvents.forEach(event => commemorationCell.appendChild(event));
-            row.appendChild(commemorationCell);
-
-            calendarBody.appendChild(row);
+calendarBody.appendChild(row);
         }
     }
 
