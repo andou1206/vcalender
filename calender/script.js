@@ -7,6 +7,13 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentPopup = null;
     const currentDate = new Date();
 
+    document.addEventListener("click", function (event) {
+        if (currentPopup && !currentPopup.contains(event.target)) {
+            currentPopup.remove();
+            currentPopup = null;
+        }
+    });
+
     function showPopup(event, row) {
         if (currentPopup) {
             currentPopup.remove();
@@ -24,7 +31,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const xIcon = document.createElement("img");
             xIcon.src = "https://vcalender.blob.core.windows.net/icons/x.png";
             xIcon.classList.add("popup-icon");
-            xIcon.addEventListener("click", () => window.open(row[6], "_blank"));
+            xIcon.addEventListener("click", () => {
+                window.open(row[6], "_blank");
+                if (currentPopup) {
+                    currentPopup.remove();
+                    currentPopup = null;
+                }
+            });
             popup.appendChild(xIcon);
         }
 
@@ -41,7 +54,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (youtubeIcon) {
                 youtubeIcon.classList.add("popup-icon");
-                youtubeIcon.addEventListener("click", () => window.open(row[7], "_blank"));
+                youtubeIcon.addEventListener("click", () => {
+                    window.open(row[7], "_blank");
+                    if (currentPopup) {
+                        currentPopup.remove();
+                        currentPopup = null;
+                    }
+                });
                 popup.appendChild(youtubeIcon);
             }
         }
@@ -84,11 +103,6 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let day = 1; day <= lastDate; day++) {
             const row = document.createElement("tr");
 
-            const today = new Date();
-            if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
-                row.style.backgroundColor = "lightyellow";
-            }
-
             const dateCell = document.createElement("td");
             dateCell.textContent = day;
             row.appendChild(dateCell);
@@ -108,18 +122,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const formattedDate = `${month + 1}/${day}`;
 
-            csvData.forEach(row => {
-                if (!row[0] || !row[1]) return;
+csvData.forEach(row => {
+    // 誕生日処理
+    if (row[0] && row[1]) {
+        if (row[0] === formattedDate) {
+            const iconImg = getIconForGroup(row[2]);
+            const birthdayEvent = createEventElement(row[1], iconImg, row);
+	    birthdayEvent.addEventListener("click", (event) => showPopup(event, row)); 
+            birthdayEvents.push(birthdayEvent);
+        }
+    }
 
                 // 10列目が空欄でない場合は処理をスキップ
                 if (row[10] && row[10].trim() !== "") return;
 
-                // 誕生日処理
-                if (row[0] === formattedDate) {
-                    const iconImg = getIconForGroup(row[2]);
-                    const birthdayEvent = createEventElement(row[1], iconImg, row);
-                    birthdayEvents.push(birthdayEvent);
-                }
+
 
                 // 記念日処理
                 if (row[5]) {
@@ -134,6 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         const commemorationEvent = document.createElement("div");
 
                         commemorationEvent.innerHTML = `${iconImg ? `<img src='https://vcalender.blob.core.windows.net/icons/${iconImg}' alt='${row[2]}' style='height:16px; vertical-align:middle;'> ` : ''}${glitterText}`;
+		        commemorationEvent.addEventListener("click", (event) => showPopup(event, row)); 
                         commemorationEvents.push(commemorationEvent);
                     }
                 }
