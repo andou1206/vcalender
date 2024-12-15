@@ -1,50 +1,48 @@
-/* CSS スタイル */
 body {
     font-family: 'Roboto', sans-serif;
     background-color: #e9f5fc;
     display: flex;
-    flex-direction: column; 
-    justify-content: flex-start; 
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
-    height: auto; 
+    height: auto;
     margin: 0;
     padding: 20px;
     box-sizing: border-box;
-
 }
 
-        .affiliate-banner {
-            width: 100%; /* 幅を100%に設定 */
-            max-width: 468px; 
-            margin: 0 auto; /* 中央揃え */
-            display: flex;
-            justify-content: center;
-        }
-        .affiliate-banner iframe {
-            width: 100%; /* iframeの幅を親要素に合わせる */
-            max-width: 100%;
-            height: auto; /* 高さを自動調整 */
-        }
+.affiliate-banner {
+    width: 100%;
+    max-width: 468px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+}
 
+.affiliate-banner iframe {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .affiliate-banner {
+        max-width: 100%;
+    }
+}
 
 .calendar {
     background-color: #ffffff;
     padding: 10px;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    width: 90vw; 
+    width: 90vw;
     max-width: 600px;
     max-height: 90vh;
     overflow-y: auto;
     transition: all 0.3s ease;
-    overflow: hidden; 
-}
-
-.date-column, .weekday-column {
-    width: 1%;
-    padding: 4px;
-    text-align: center;
-    white-space: nowrap;
+    overflow: hidden;
 }
 
 .calendar:hover {
@@ -80,7 +78,6 @@ button:hover {
     background-color: #357ABD;
 }
 
-
 table {
     width: 100%;
     border-collapse: collapse;
@@ -106,7 +103,6 @@ thead th {
     color: #333;
 }
 
-
 .sunday {
     color: #e74c3c;
 }
@@ -117,11 +113,10 @@ thead th {
 
 .birthday, .commemoration {
     width: auto;
-    white-space: normal; 
+    white-space: normal;
 }
 
 .glitter-text {
-    color: #f39c12;
     font-weight: bold;
     background: linear-gradient(90deg, #f39c12, #f1c40f, #f39c12);
     background-size: 200% 200%;
@@ -138,18 +133,16 @@ tr.highlight {
     background-color: lightyellow !important;
 }
 
-
 @keyframes glitter {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
 
-
 .popup {
     display: flex;
-    align-items: center; 
-    padding: 8px; 
+    align-items: center;
+    padding: 8px;
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -159,31 +152,24 @@ tr.highlight {
 }
 
 .popup-icon {
-    width: 24px; 
+    width: 24px;
     height: 24px;
-    margin-right: 8px; 
+    margin-right: 8px;
 }
 
-
-@media (max-width: 600px) {
-    th, td {
-        font-size: 3vw;
-    }
+button {
+    padding: 4px 8px;
+    font-size: 0.9em;
 }
-    button {
-        padding: 4px 8px;
-        font-size: 0.9em;
-    }
 
-    th, td {
-        padding: 6px;
-        font-size: 0.8em;
-    }
+th, td {
+    padding: 6px;
+    font-size: 0.8em;
 }
 
 @media (max-width: 600px) {
     th, td {
-        font-size: 2.5vw; 
+        font-size: 2.5vw;
     }
     button {
         font-size: 3.5vw;
@@ -195,73 +181,25 @@ tr.highlight {
 
 .calendar-container {
     overflow-y: auto;
-    max-height: 70vh; 
+    max-height: 70vh;
 }
 
-
-   .popup-title {
-        font-size: 10px;
-        font-weight: bold;
-        background: linear-gradient(to right, #FF7E5F, #FEB47B); 
-        -webkit-background-clip: text;
-        color: transparent;
-    }
-
+.popup-title {
+    font-size: 10px;
+    font-weight: bold;
+    background: linear-gradient(to right, #FF7E5F, #FEB47B);
+    -webkit-background-clip: text;
+    color: transparent;
+}
 
 @media (max-width: 600px) {
     #bannerGrid {
-        grid-template-columns: repeat(2, 1fr); 
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 400px) {
     #bannerGrid {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr;
     }
 }
-
-        #bannerGrid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 10px; 
-            max-width: 720px; 
-            margin: 20px auto; 
-        }
-
-        .banner {
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            overflow: hidden;
-            background-color: #fff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-
-#bannerGrid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); 
-    gap: 10px; 
-    width: 100%; 
-    max-width: 600px; 
-    margin: 0 auto;
-    padding: 0;
-    box-sizing: border-box; 
-}
-
-.banner {
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.banner img {
-    width: 100%;
-    height: auto; 
-}
-
-
-
