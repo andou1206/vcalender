@@ -21,7 +21,6 @@ body {
 
 .affiliate-banner iframe {
     width: 100%;
-    max-width: 100%;
     height: auto;
 }
 
@@ -29,6 +28,13 @@ body {
 @media (max-width: 768px) {
     .affiliate-banner {
         max-width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .affiliate-banner iframe {
+        width: 100%;
+        height: auto;
     }
 }
 
